@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/taskListFragment">
+
+    <fragment
+        android:id="@+id/taskListFragment"
+        android:name="com.bignerdranch.android.todolist.TaskListFragment"
+        android:label="TaskListFragment"
+        tools:layout="@layout/fragment_task_list" >
+        <action
+            android:id="@+id/show_task_detail"
+            app:destination="@id/taskDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/taskDetailFragment"
+        android:name="com.bignerdranch.android.todolist.TaskDetailFragment"
+        android:label="TaskDetailFragment"
+        tools:layout="@layout/fragment_task_detail" >
+        <argument
+            android:name="taskId"
+            app:argType="java.util.UUID" />
+        <action
+            android:id="@+id/select_date"
+            app:destination="@id/datePickerFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/datePickerFragment"
+        android:name="com.bignerdranch.android.todolist.DatePickerFragment"
+        android:label="DatePickerFragment" >
+        <argument
+            android:name="taskDate"
+            app:argType="java.util.Date" />
+    </dialog>
+</navigation>
