@@ -26,7 +26,10 @@ class TaskListViewModel : ViewModel() {
     }
 
     suspend fun addTask(task: Task) {
+        Log.d(TAG, "Adding task in ViewModel: $task")
         taskRepository.addTask(task)
+        taskRepository.getTasks().collect { tasks ->
+            _tasks.value = tasks
+        }
     }
-
 }

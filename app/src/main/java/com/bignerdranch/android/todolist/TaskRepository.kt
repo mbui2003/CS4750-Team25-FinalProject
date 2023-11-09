@@ -1,5 +1,6 @@
 package com.bignerdranch.android.todolist
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
 import androidx.room.Room
@@ -31,11 +32,13 @@ class TaskRepository private constructor(
 
     fun updateTask(task: Task) {
         coroutineScope.launch {
+            Log.d(TAG, "Adding task: $task")
             database.taskDao().updateTask(task)
         }
     }
 
     suspend fun addTask(task: Task) {
+        Log.d(TAG, "Fetching tasks: $task")
         database.taskDao().addTask(task)
     }
 

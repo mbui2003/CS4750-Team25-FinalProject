@@ -1,5 +1,6 @@
 package com.bignerdranch.android.todolist
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -86,6 +87,7 @@ class TaskListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 taskListViewModel.tasks.collect { tasks ->
+                    Log.d(TAG, "Received tasks: $tasks")
                     binding.taskRecyclerView.adapter =
                         TaskListAdapter(tasks) { taskId ->
                             findNavController().navigate(
