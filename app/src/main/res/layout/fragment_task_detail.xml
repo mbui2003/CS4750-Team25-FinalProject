@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        android:text="@string/task_title_label" />
+    <EditText
+        android:id="@+id/task_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/task_title_hint"
+        android:importantForAutofill="no"
+        android:inputType="text" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        android:text="@string/task_details_label" />
+    <Button
+        android:id="@+id/task_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Wed May 11 11:56 EST 2022" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        android:text="@string/priority_label"
+        android:layout_marginBottom="8dp" />
+
+    <Spinner
+        android:id="@+id/priority_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/priority_levels" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        android:text="@string/category_label"
+        android:layout_marginBottom="8dp" />
+    <Spinner
+        android:id="@+id/category_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/category_levels" />
+    <CheckBox
+        android:id="@+id/task_complete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/task_solved_label" />
+</LinearLayout>

@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">To-Do List</string>
+    <string name="task_title_hint">Enter a title for the task.</string>
+    <string name="task_title_label">Title</string>
+    <string name="task_details_label">Details</string>
+    <string name="task_solved_label">Complete</string>
+    <string name="new_task">New Task</string>
+    <string name="delete_task">Delete Task</string>
+    <string name="no_tasks">There are no new tasks!</string>
+    <string name="priority_label">Priority</string>
+    <string name="category_label">Category</string>
+</resources>
