@@ -1,7 +1,6 @@
 package com.bignerdranch.android.todolist
 
 import android.content.Context
-import android.util.Log
 import androidx.room.Room
 import com.bignerdranch.android.todolist.database.TaskDatabase
 import com.bignerdranch.android.todolist.database.migration_1_2

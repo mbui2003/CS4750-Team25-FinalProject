@@ -13,7 +13,7 @@ class TaskHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(task: Task, onTaskClicked: (taskId: UUID) -> Unit) {
         binding.taskTitle.text = task.title
-        binding.taskDate.text = DateFormat.format("EEEE, MMM dd, yyyy.", task.date)
+        binding.taskDate.text = DateFormat.format("EEE, MMM dd, yyyy", task.date)
 
         binding.root.setOnClickListener {
             onTaskClicked(task.id)

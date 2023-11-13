@@ -19,7 +19,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bignerdranch.android.todolist.databinding.FragmentTaskDetailBinding
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Date
+
+private const val DATE_FORMAT = "EEE, MMM dd, yyyy"
 
 class TaskDetailFragment: Fragment() {
 
@@ -154,7 +157,12 @@ class TaskDetailFragment: Fragment() {
             if (taskTitle.text.toString() != task.title) {
                 taskTitle.setText(task.title)
             }
-            taskDate.text = task.date.toString()
+
+            val dateFormat = SimpleDateFormat(DATE_FORMAT)
+            val formattedDate = dateFormat.format(task.date)
+            taskDate.text = formattedDate
+
+            // taskDate.text = task.date.toString()
             taskDate.setOnClickListener {
                 findNavController().navigate(
                     TaskDetailFragmentDirections.selectDate(task.date)
