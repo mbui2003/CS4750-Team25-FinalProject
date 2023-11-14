@@ -6,6 +6,7 @@
     <string name="task_solved_label">Complete</string>
     <string name="new_task">New Task</string>
     <string name="delete_task">Delete Task</string>
+    <string name="toggle_theme">Dark Mode / Light Mode</string>
     <string name="no_tasks">There are no new tasks!</string>
     <string name="priority_label">Priority</string>
     <string name="category_label">Category</string>
