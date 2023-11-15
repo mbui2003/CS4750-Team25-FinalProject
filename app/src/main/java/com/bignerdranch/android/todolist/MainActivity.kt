@@ -1,5 +1,6 @@
 package com.bignerdranch.android.todolist
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -7,7 +8,20 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatDelegate
 
 class MainActivity : AppCompatActivity() {
+
+    private val PREFS_NAME = "MyPrefsFile"
+    private val PREF_CURRENT_THEME = "current_theme"
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Retrieve the saved theme mode and apply it
+        val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val isDarkMode = sharedPreferences.getBoolean(PREF_CURRENT_THEME, false)
+        if (isDarkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
     }
@@ -34,15 +48,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun toggleTheme() {
-        when (resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) {
-            android.content.res.Configuration.UI_MODE_NIGHT_NO -> {
-                // Switch to dark mode
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            }
-            android.content.res.Configuration.UI_MODE_NIGHT_YES -> {
-                // Switch to light mode
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
+        val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val isDarkMode = sharedPreferences.getBoolean(PREF_CURRENT_THEME, false)
+
+        if (isDarkMode) {
+            // Switch to light mode
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            sharedPreferences.edit().putBoolean(PREF_CURRENT_THEME, false).apply()
+        } else {
+            // Switch to dark mode
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            sharedPreferences.edit().putBoolean(PREF_CURRENT_THEME, true).apply()
         }
     }
 
