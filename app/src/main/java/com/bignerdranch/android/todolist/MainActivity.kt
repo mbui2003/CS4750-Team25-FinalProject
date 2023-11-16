@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.navigation.fragment.NavHostFragment
+import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,8 +24,23 @@ class MainActivity : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
 
+        val taskIdString = intent.getStringExtra("EXTRA_TASK_ID")
+        taskIdString?.let {
+            val taskId = UUID.fromString(it)
+            navigateToTaskDetail(taskId)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+    }
+
+    private fun navigateToTaskDetail(taskId: UUID) {
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.fragment_container) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        val action = TaskListFragmentDirections.showTaskDetail(taskId)
+        navController.navigate(action)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

@@ -31,4 +31,7 @@ interface TaskDao {
 
     @Query("UPDATE Task SET selectedCategory = :category WHERE id = :taskId")
     suspend fun updateSelectedCategory(taskId: UUID, category: Int)
+
+    @Query("SELECT * FROM Task WHERE Date <= :currentDate")
+    suspend fun getTasksForNotification(currentDate: Long): List<Task>
 }

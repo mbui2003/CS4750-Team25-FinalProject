@@ -64,5 +64,10 @@ class TaskRepository private constructor(
         fun get(): TaskRepository {
             return INSTANCE ?:
             throw IllegalStateException("TaskRepository must be initialized")
-        } }
+        }
+    }
+
+    suspend fun getTasksForNotification(currentDate: Long): List<Task> {
+        return database.taskDAO().getTasksForNotification(currentDate)
+    }
 }
