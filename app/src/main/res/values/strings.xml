@@ -10,4 +10,7 @@
     <string name="no_tasks">There are no new tasks!</string>
     <string name="priority_label">Priority</string>
     <string name="category_label">Category</string>
+    <string name="search">Search</string>
+    <string name="clear_search">Clear Search</string>
+    <string name="no_results_found">No tasks found!</string>
 </resources>

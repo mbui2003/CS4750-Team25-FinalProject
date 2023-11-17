@@ -11,8 +11,6 @@ data class Task(
     val title: String,
     val date: Date,
     val isComplete: Boolean,
-    val priority: String,
-    val category: String,
     var selectedPriority: Int,
     var selectedCategory: Int
 )

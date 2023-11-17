@@ -34,4 +34,7 @@ interface TaskDao {
 
     @Query("SELECT * FROM Task WHERE Date <= :currentDate")
     suspend fun getTasksForNotification(currentDate: Long): List<Task>
+
+    @Query("SELECT * FROM Task WHERE title LIKE '%' || :searchQuery || '%'")
+    fun searchTasksByName(searchQuery: String): Flow<List<Task>>
 }

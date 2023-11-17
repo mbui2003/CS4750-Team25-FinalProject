@@ -18,6 +18,9 @@ class TaskRepository private constructor(
     private val coroutineScope: CoroutineScope = GlobalScope
 ) {
 
+    private val sharedPreferences =
+        context.getSharedPreferences("TaskRepository", Context.MODE_PRIVATE)
+
     private val database: TaskDatabase = Room
         .databaseBuilder(
             context.applicationContext,
@@ -45,14 +48,6 @@ class TaskRepository private constructor(
         database.taskDAO().deleteTask(task)
     }
 
-    suspend fun updateSelectedPriority(taskId: UUID, priority: Int) {
-        database.taskDAO().updateSelectedPriority(taskId, priority)
-    }
-
-    suspend fun updateSelectedCategory(taskId: UUID, category: Int) {
-        database.taskDAO().updateSelectedCategory(taskId, category)
-    }
-
     companion object {
         private var INSTANCE: TaskRepository? = null
 
@@ -70,4 +65,6 @@ class TaskRepository private constructor(
     suspend fun getTasksForNotification(currentDate: Long): List<Task> {
         return database.taskDAO().getTasksForNotification(currentDate)
     }
+
+    fun searchTasksByName(searchQuery: String): Flow<List<Task>> = database.taskDAO().searchTasksByName(searchQuery)
 }

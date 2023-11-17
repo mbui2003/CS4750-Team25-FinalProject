@@ -7,6 +7,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -53,6 +55,24 @@ class TaskListFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.fragment_task_list, menu)
+
+        val searchItem = menu.findItem(R.id.menu_item_search)
+        val searchView = searchItem.actionView as SearchView
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // Close keyboard and clear cursor when hit enter
+                searchView.clearFocus()
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let {
+                    taskListViewModel.searchTasksByName(it)
+                }
+                return true
+            }
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -70,8 +90,6 @@ class TaskListFragment : Fragment() {
                 title = "",
                 date = Date(),
                 isComplete = false,
-                priority = "",
-                category = "",
                 selectedPriority = 0, // Set a default value here
                 selectedCategory = 0 // Set a default value here
             )
@@ -105,10 +123,20 @@ class TaskListFragment : Fragment() {
     }
     private fun updateViewsVisibility(crimes: List<Task>) {
         if (crimes.isEmpty()) {
-            binding.emptyTaskList.visibility = View.VISIBLE
-            binding.newTaskButton.visibility = View.VISIBLE
-            binding.taskRecyclerView.visibility = View.GONE
+            if (taskListViewModel.getLastSearchQuery().isNotEmpty()) {
+                binding.noResultFound.visibility = View.VISIBLE
+                binding.emptyTaskList.visibility = View.GONE
+                binding.newTaskButton.visibility = View.GONE
+                binding.taskRecyclerView.visibility = View.GONE
+            }
+            else {
+                binding.noResultFound.visibility = View.GONE
+                binding.emptyTaskList.visibility = View.VISIBLE
+                binding.newTaskButton.visibility = View.VISIBLE
+                binding.taskRecyclerView.visibility = View.GONE
+            }
         } else {
+            binding.noResultFound.visibility = View.GONE
             binding.emptyTaskList.visibility = View.GONE
             binding.newTaskButton.visibility = View.GONE
             binding.taskRecyclerView.visibility = View.VISIBLE
