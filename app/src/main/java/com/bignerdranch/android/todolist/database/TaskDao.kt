@@ -37,4 +37,11 @@ interface TaskDao {
 
     @Query("SELECT * FROM Task WHERE title LIKE '%' || :searchQuery || '%'")
     fun searchTasksByName(searchQuery: String): Flow<List<Task>>
+
+    @Query("SELECT * FROM Task WHERE selectedCategory = :category")
+    fun getTasksByCategory(category: Int): Flow<List<Task>>
+
+    @Query("SELECT * FROM Task WHERE selectedPriority = :priority")
+    fun getTasksByPriority(priority: Int): Flow<List<Task>>
+
 }

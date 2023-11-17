@@ -1,12 +1,16 @@
 package com.bignerdranch.android.todolist
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -42,6 +46,9 @@ class TaskListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentTaskListBinding.inflate(inflater, container, false)
+
+        val categorySpinner: Spinner = binding.categorySpinner
+        val prioritySpinner: Spinner = binding.prioritySpinner
 
         binding.taskRecyclerView.layoutManager = LinearLayoutManager(context)
 
@@ -105,6 +112,78 @@ class TaskListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Priority and Spinner Code session
+        val categorySpinner: Spinner = binding.categorySpinner
+        val prioritySpinner: Spinner = binding.prioritySpinner
+
+        val categoryAdapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.category_levels,
+            android.R.layout.simple_spinner_item
+        ).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+
+        val priorityAdapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.priority_levels,
+            android.R.layout.simple_spinner_item
+        ).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+
+        categorySpinner.adapter = categoryAdapter
+        prioritySpinner.adapter = priorityAdapter
+
+        categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parentView: AdapterView<*>,
+                selectedItemView: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedCategory = categorySpinner.selectedItemPosition
+                if (selectedCategory > 0) {
+                    taskListViewModel.getTasksByCategory(selectedCategory)
+                    taskListViewModel.setIsSorting(true)
+                } else {
+                    // Fetch the original list if the user selected the default option,
+                    taskListViewModel.searchTasksByName(taskListViewModel.getLastSearchQuery())
+                    taskListViewModel.setIsSorting(false)
+                }
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>) {
+                // Do nothing
+            }
+        }
+
+        prioritySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parentView: AdapterView<*>,
+                selectedItemView: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedPriority = prioritySpinner.selectedItemPosition
+                if (selectedPriority > 0) {
+                    taskListViewModel.getTasksByPriority(selectedPriority)
+                    taskListViewModel.setIsSorting(true)
+                } else {
+                    // User selected the default option, fetch the original list
+                    taskListViewModel.searchTasksByName(taskListViewModel.getLastSearchQuery())
+                    taskListViewModel.setIsSorting(false)
+                }
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>) {
+                // Fetch the original list when the user choose the default option
+                taskListViewModel.searchTasksByName(taskListViewModel.getLastSearchQuery())
+                taskListViewModel.setIsSorting(false)
+            }
+        }
+
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 taskListViewModel.tasks.collect { tasks ->
@@ -123,19 +202,31 @@ class TaskListFragment : Fragment() {
     }
     private fun updateViewsVisibility(crimes: List<Task>) {
         if (crimes.isEmpty()) {
-            if (taskListViewModel.getLastSearchQuery().isNotEmpty()) {
+            if (taskListViewModel.getLastSearchQuery().isNotEmpty() ||
+                    taskListViewModel.isSorting.value) {
+                Log.d("TaskListFragment", "Here")
+                binding.prioritySpinner.visibility = View.VISIBLE
+                binding.categorySpinner.visibility = View.VISIBLE
+                binding.sessionDivider.visibility = View.VISIBLE
                 binding.noResultFound.visibility = View.VISIBLE
                 binding.emptyTaskList.visibility = View.GONE
                 binding.newTaskButton.visibility = View.GONE
                 binding.taskRecyclerView.visibility = View.GONE
             }
             else {
+                Log.d("TaskListFragment", "HereHere")
+                binding.prioritySpinner.visibility = View.GONE
+                binding.categorySpinner.visibility = View.GONE
+                binding.sessionDivider.visibility = View.GONE
                 binding.noResultFound.visibility = View.GONE
                 binding.emptyTaskList.visibility = View.VISIBLE
                 binding.newTaskButton.visibility = View.VISIBLE
                 binding.taskRecyclerView.visibility = View.GONE
             }
         } else {
+            Log.d("TaskListFragment", "HereHereHere")
+            binding.prioritySpinner.visibility = View.VISIBLE
+            binding.categorySpinner.visibility = View.VISIBLE
             binding.noResultFound.visibility = View.GONE
             binding.emptyTaskList.visibility = View.GONE
             binding.newTaskButton.visibility = View.GONE
