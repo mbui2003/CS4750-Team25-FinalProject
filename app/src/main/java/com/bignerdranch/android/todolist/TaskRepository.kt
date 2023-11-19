@@ -1,6 +1,8 @@
 package com.bignerdranch.android.todolist
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import androidx.room.Room
 import com.bignerdranch.android.todolist.database.TaskDatabase
 import com.bignerdranch.android.todolist.database.migration_1_2
@@ -8,6 +10,8 @@ import com.bignerdranch.android.todolist.database.migration_2_3
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -71,11 +75,20 @@ class TaskRepository private constructor(
     }
 
     fun getTasksByCategory(category: Int): Flow<List<Task>> {
-        return database.taskDAO().getTasksByCategory(category)
+        return database.taskDAO().getTasksByCategory(category).also {
+            it.onEach { tasks ->
+                Log.d(TAG, "Tasks fetched by category ($category): $tasks")
+            }.launchIn(coroutineScope)
+        }
     }
+
+// Inside TaskRepository.kt
 
     fun getTasksByPriority(priority: Int): Flow<List<Task>> {
-        return database.taskDAO().getTasksByPriority(priority)
+        return database.taskDAO().getTasksByPriority(priority).also {
+            it.onEach { tasks ->
+                Log.d(TAG, "Tasks fetched by priority ($priority): $tasks")
+            }.launchIn(coroutineScope)
+        }
     }
-
 }

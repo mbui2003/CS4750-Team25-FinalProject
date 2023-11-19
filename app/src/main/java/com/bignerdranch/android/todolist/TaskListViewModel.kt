@@ -21,9 +21,21 @@ class TaskListViewModel(private val savedStateHandle: SavedStateHandle) : ViewMo
     private val _searchKey = "search_query"
 
     // Save state if the user is sorting
-    private val _isSorting = MutableStateFlow(false)
-    val isSorting: StateFlow<Boolean>
-        get() = _isSorting.asStateFlow()
+    private val _isCategorySorting = MutableStateFlow(false)
+    val isCategorySorting: StateFlow<Boolean>
+        get() = _isCategorySorting.asStateFlow()
+
+    private val _isPrioritySorting = MutableStateFlow(false)
+    val isPrioritySorting: StateFlow<Boolean>
+        get() = _isPrioritySorting.asStateFlow()
+
+    private val _isSortingLoading = MutableStateFlow(false)
+    val isSortingLoading: StateFlow<Boolean>
+        get() = _isSortingLoading.asStateFlow()
+
+    fun setIsSortingLoading(isLoading: Boolean) {
+        _isSortingLoading.value = isLoading
+    }
 
     init {
         viewModelScope.launch {
@@ -53,24 +65,31 @@ class TaskListViewModel(private val savedStateHandle: SavedStateHandle) : ViewMo
         return savedStateHandle.get(_searchKey) ?: ""
     }
 
-    fun getTasksByCategory(category: Int) {
-        viewModelScope.launch {
-            taskRepository.getTasksByCategory(category).collect { tasks ->
-                _tasks.value = tasks
-            }
-        }
-    }
-
     fun getTasksByPriority(priority: Int) {
         viewModelScope.launch {
+            setIsSortingLoading(true)
             taskRepository.getTasksByPriority(priority).collect { tasks ->
                 _tasks.value = tasks
             }
+            setIsSortingLoading(false)
         }
     }
 
-    fun setIsSorting(isSorting: Boolean) {
-        _isSorting.value = isSorting
-        Log.d(TAG, "SetIsSorting reached: $isSorting")
+    fun getTasksByCategory(category: Int) {
+        viewModelScope.launch {
+            setIsSortingLoading(true)
+            taskRepository.getTasksByCategory(category).collect { tasks ->
+                _tasks.value = tasks
+            }
+            setIsSortingLoading(false)
+        }
+    }
+
+    fun setIsCategorySorting(isSorting: Boolean) {
+        _isCategorySorting.value = isSorting
+    }
+
+    fun setIsPrioritySorting(isSorting: Boolean) {
+        _isPrioritySorting.value = isSorting
     }
 }

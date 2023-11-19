@@ -43,6 +43,14 @@
         android:layout_marginBottom="16dp"
         android:background="@color/purple_500" />
 
+    <ProgressBar
+        android:id="@+id/loading_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        style="@android:style/Widget.ProgressBar.Small"/>
+
     <androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/task_recycler_view"
         android:layout_width="match_parent"
