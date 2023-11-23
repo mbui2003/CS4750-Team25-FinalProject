@@ -67,6 +67,9 @@ class TaskListFragment : Fragment() {
         val searchItem = menu.findItem(R.id.menu_item_search)
         val searchView = searchItem.actionView as SearchView
 
+        // Set the initial query from the ViewModel
+        searchView.setQuery(taskListViewModel.getLastSearchQuery(), false)
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 // Close keyboard and clear cursor when hit enter
@@ -80,6 +83,9 @@ class TaskListFragment : Fragment() {
                     val selectedCategory = binding.categorySpinner.selectedItemPosition
 
                     taskListViewModel.getFilteredTasks(it, selectedCategory, selectedPriority)
+
+                    // Update the search query in the ViewModel
+                    taskListViewModel.setSearchQuery(it)
                 }
                 return true
             }

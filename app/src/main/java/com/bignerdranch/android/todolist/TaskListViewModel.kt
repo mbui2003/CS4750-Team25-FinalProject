@@ -59,6 +59,10 @@ class TaskListViewModel(private val savedStateHandle: SavedStateHandle) : ViewMo
         return savedStateHandle.get(_searchKey) ?: ""
     }
 
+    fun setSearchQuery(query: String) {
+        savedStateHandle.set(_searchKey, query)
+    }
+
     fun getFilteredTasks(searchQuery: String, category: Int, priority: Int) {
         setIsSortingLoading(true)
         viewModelScope.launch {
