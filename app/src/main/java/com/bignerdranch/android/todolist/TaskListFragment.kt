@@ -99,8 +99,7 @@ class TaskListFragment : Fragment() {
                 true
             }
 
-            //  else -> super.onOptionsItemSelected(item)
-            else -> true
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -222,8 +221,7 @@ class TaskListFragment : Fragment() {
                     binding.taskRecyclerView.adapter =
                         TaskListAdapter(tasks) { taskId ->
                             findNavController().navigate(
-                                TaskListFragmentDirections.showTaskDetail(taskId)
-                            )
+                                TaskListFragmentDirections.showTaskDetail(taskId))
                         }
 
                     updateViewsVisibility(tasks)
