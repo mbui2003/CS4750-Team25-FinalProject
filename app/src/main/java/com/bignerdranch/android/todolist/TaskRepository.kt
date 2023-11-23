@@ -70,25 +70,7 @@ class TaskRepository private constructor(
         return database.taskDAO().getTasksForNotification(currentDate)
     }
 
-    fun searchTasksByName(searchQuery: String): Flow<List<Task>> {
-        return database.taskDAO().searchTasksByName(searchQuery)
-    }
-
-    fun getTasksByCategory(category: Int): Flow<List<Task>> {
-        return database.taskDAO().getTasksByCategory(category).also {
-            it.onEach { tasks ->
-                Log.d(TAG, "Tasks fetched by category ($category): $tasks")
-            }.launchIn(coroutineScope)
-        }
-    }
-
-// Inside TaskRepository.kt
-
-    fun getTasksByPriority(priority: Int): Flow<List<Task>> {
-        return database.taskDAO().getTasksByPriority(priority).also {
-            it.onEach { tasks ->
-                Log.d(TAG, "Tasks fetched by priority ($priority): $tasks")
-            }.launchIn(coroutineScope)
-        }
+    fun getFilteredTasks(searchQuery: String, category: Int, priority: Int): Flow<List<Task>> {
+        return database.taskDAO().getFilteredTasks(searchQuery, category, priority)
     }
 }

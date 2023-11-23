@@ -17,21 +17,21 @@
         android:paddingBottom="2dp">
 
         <Spinner
-            android:id="@+id/prioritySpinner"
+            android:id="@+id/categorySpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="5dp"
             android:layout_gravity="center"
-            android:entries="@array/priority_levels" />
+            android:entries="@array/category_levels" />
 
         <Spinner
-            android:id="@+id/categorySpinner"
+            android:id="@+id/prioritySpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_gravity="center"
-            android:entries="@array/category_levels" />
+            android:entries="@array/priority_levels" />
 
     </LinearLayout>
 
@@ -57,29 +57,37 @@
         android:layout_height="match_parent"
         android:gravity="center"/>
 
-    <TextView
-        android:id="@+id/empty_task_list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        android:text="@string/no_tasks" />
+    <LinearLayout
+        android:id="@+id/innerLinearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
 
-    <Button
-        android:id="@+id/new_task_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        android:text="@string/new_task" />
+        <TextView
+            android:id="@+id/empty_task_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:text="@string/no_tasks" />
+
+        <Button
+            android:id="@+id/new_task_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:text="@string/new_task" />
 
 
-    <TextView
-        android:id="@+id/no_result_found"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        android:text="@string/no_results_found" />
+        <TextView
+            android:id="@+id/no_result_found"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:text="@string/no_results_found" />
+    </LinearLayout>
 
 </LinearLayout>

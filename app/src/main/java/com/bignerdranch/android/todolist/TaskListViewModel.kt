@@ -20,15 +20,15 @@ class TaskListViewModel(private val savedStateHandle: SavedStateHandle) : ViewMo
 
     private val _searchKey = "search_query"
 
+    private val _selectedPriorityKey = "selectedPriority"
+    val selectedPriorityKey: Int
+        get() = savedStateHandle.get(_selectedPriorityKey) ?: 0
+
+    private val _selectedCategoryKey = "selectedCategory"
+    val selectedCategoryKey: Int
+        get() = savedStateHandle.get(_selectedCategoryKey) ?: 0
+
     // Save state if the user is sorting
-    private val _isCategorySorting = MutableStateFlow(false)
-    val isCategorySorting: StateFlow<Boolean>
-        get() = _isCategorySorting.asStateFlow()
-
-    private val _isPrioritySorting = MutableStateFlow(false)
-    val isPrioritySorting: StateFlow<Boolean>
-        get() = _isPrioritySorting.asStateFlow()
-
     private val _isSortingLoading = MutableStateFlow(false)
     val isSortingLoading: StateFlow<Boolean>
         get() = _isSortingLoading.asStateFlow()
@@ -39,12 +39,15 @@ class TaskListViewModel(private val savedStateHandle: SavedStateHandle) : ViewMo
 
     init {
         viewModelScope.launch {
-            // Retrieve the last search query from SavedStateHandle
             val lastSearchQuery: String? = savedStateHandle.get(_searchKey)
-            // Use the last search query to initialize the list of tasks
-            taskRepository.searchTasksByName(lastSearchQuery ?: "").collect { tasks ->
-                _tasks.value = tasks
-            }
+            val lastSelectedCategory: Int = savedStateHandle.get(_selectedCategoryKey) ?: 0
+            val lastSelectedPriority: Int = savedStateHandle.get(_selectedPriorityKey) ?: 0
+
+            // Use the last search query, selected category, and priority to initialize the list of tasks
+            taskRepository.getFilteredTasks(lastSearchQuery ?: "", lastSelectedCategory, lastSelectedPriority)
+                .collect { tasks ->
+                    _tasks.value = tasks
+                }
         }
     }
 
@@ -52,44 +55,26 @@ class TaskListViewModel(private val savedStateHandle: SavedStateHandle) : ViewMo
         taskRepository.addTask(task)
     }
 
-    fun searchTasksByName(searchQuery: String) {
-        viewModelScope.launch {
-            savedStateHandle.set(_searchKey, searchQuery)
-            taskRepository.searchTasksByName(searchQuery).collect { tasks ->
-                _tasks.value = tasks
-            }
-        }
-    }
-
     fun getLastSearchQuery(): String {
         return savedStateHandle.get(_searchKey) ?: ""
     }
 
-    fun getTasksByPriority(priority: Int) {
+    fun getFilteredTasks(searchQuery: String, category: Int, priority: Int) {
+        setIsSortingLoading(true)
         viewModelScope.launch {
-            setIsSortingLoading(true)
-            taskRepository.getTasksByPriority(priority).collect { tasks ->
+            savedStateHandle.set(_searchKey, searchQuery)
+            taskRepository.getFilteredTasks(searchQuery, category, priority).collect { tasks ->
                 _tasks.value = tasks
             }
-            setIsSortingLoading(false)
         }
+        setIsSortingLoading(false)
     }
 
-    fun getTasksByCategory(category: Int) {
-        viewModelScope.launch {
-            setIsSortingLoading(true)
-            taskRepository.getTasksByCategory(category).collect { tasks ->
-                _tasks.value = tasks
-            }
-            setIsSortingLoading(false)
-        }
+    fun setSelectedPriority(selectedPriority: Int) {
+        savedStateHandle.set(_selectedPriorityKey, selectedPriority)
     }
 
-    fun setIsCategorySorting(isSorting: Boolean) {
-        _isCategorySorting.value = isSorting
-    }
-
-    fun setIsPrioritySorting(isSorting: Boolean) {
-        _isPrioritySorting.value = isSorting
+    fun setSelectedCategory(selectedCategory: Int) {
+        savedStateHandle.set(_selectedCategoryKey, selectedCategory)
     }
 }

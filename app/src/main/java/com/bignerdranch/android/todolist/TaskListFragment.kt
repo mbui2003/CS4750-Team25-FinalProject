@@ -79,31 +79,7 @@ class TaskListFragment : Fragment() {
                     val selectedPriority = binding.prioritySpinner.selectedItemPosition
                     val selectedCategory = binding.categorySpinner.selectedItemPosition
 
-                    if (it.isNotEmpty()) {
-                        if (selectedPriority > 0 && selectedCategory > 0) {
-                            taskListViewModel.getTasksByPriority(selectedPriority)
-                            taskListViewModel.getTasksByCategory(selectedCategory)
-                        } else {
-                            if (selectedPriority > 0) {
-                                taskListViewModel.getTasksByPriority(selectedPriority)
-                            } else {
-                                taskListViewModel.getTasksByCategory(selectedCategory)
-                            }
-                        }
-
-                        taskListViewModel.searchTasksByName(it)
-                    } else {
-                        if (selectedPriority > 0 && selectedCategory > 0) {
-                            taskListViewModel.getTasksByPriority(selectedPriority)
-                            taskListViewModel.getTasksByCategory(selectedCategory)
-                        } else {
-                            if (selectedPriority > 0) {
-                                taskListViewModel.getTasksByPriority(selectedPriority)
-                            } else {
-                                taskListViewModel.getTasksByCategory(selectedCategory)
-                            }
-                        }
-                    }
+                    taskListViewModel.getFilteredTasks(it, selectedCategory, selectedPriority)
                 }
                 return true
             }
@@ -168,6 +144,33 @@ class TaskListFragment : Fragment() {
         categorySpinner.adapter = categoryAdapter
         prioritySpinner.adapter = priorityAdapter
 
+        categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parentView: AdapterView<*>,
+                selectedItemView: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedPriority = prioritySpinner.selectedItemPosition
+                val selectedCategory = categorySpinner.selectedItemPosition
+
+                viewLifecycleOwner.lifecycleScope.launch {
+                    Log.d("TaskListFragment", "Selected Priority: $selectedPriority")
+                    Log.d("TaskListFragment", "Selected Category: $selectedCategory")
+
+                    // Update the selected category in the ViewModel
+                    taskListViewModel.setSelectedCategory(selectedCategory)
+
+                    val searchQuery = taskListViewModel.getLastSearchQuery()
+                    taskListViewModel.getFilteredTasks(searchQuery, selectedCategory, selectedPriority)
+                }
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>) {
+                // Do nothing
+            }
+        }
+
         prioritySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parentView: AdapterView<*>,
@@ -181,22 +184,12 @@ class TaskListFragment : Fragment() {
                 viewLifecycleOwner.lifecycleScope.launch {
                     Log.d("TaskListFragment", "Selected Priority: $selectedPriority")
                     Log.d("TaskListFragment", "Selected Category: $selectedCategory")
-                    if (selectedPriority > 0) {
-                        taskListViewModel.searchTasksByName(taskListViewModel.getLastSearchQuery())
-                        taskListViewModel.getTasksByPriority(selectedPriority)
-                        taskListViewModel.setIsPrioritySorting(true)
-                    } else {
-                        if (selectedCategory > 0) {
-                            Log.d("TaskListFragment", "Right here priority")
-                            taskListViewModel.searchTasksByName(taskListViewModel.getLastSearchQuery())
-                            taskListViewModel.getTasksByCategory(categorySpinner.selectedItemPosition)
-                        } else {
-                            // User selected the default option, fetch the original list
-                            Log.d("TaskListFragment", "Right here here priority")
-                            taskListViewModel.searchTasksByName(taskListViewModel.getLastSearchQuery())
-                            taskListViewModel.setIsPrioritySorting(false)
-                        }
-                    }
+
+                    // Update the selected priority in the ViewModel
+                    taskListViewModel.setSelectedPriority(selectedPriority)
+
+                    val searchQuery = taskListViewModel.getLastSearchQuery()
+                    taskListViewModel.getFilteredTasks(searchQuery, selectedCategory, selectedPriority)
                 }
             }
 
@@ -204,57 +197,6 @@ class TaskListFragment : Fragment() {
                 // Do nothing
             }
         }
-
-        categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parentView: AdapterView<*>,
-                selectedItemView: View?,
-                position: Int,
-                id: Long
-            ) {
-                val selectedPriority = prioritySpinner.selectedItemPosition
-                val selectedCategory = categorySpinner.selectedItemPosition
-                Log.d("TaskListFragment", "Selected Priority: $selectedPriority")
-                Log.d("TaskListFragment", "Selected Category: $selectedCategory")
-
-                viewLifecycleOwner.lifecycleScope.launch {
-                    if (selectedCategory > 0) {
-                        taskListViewModel.searchTasksByName(taskListViewModel.getLastSearchQuery())
-                        taskListViewModel.getTasksByCategory(selectedCategory)
-                        taskListViewModel.setIsCategorySorting(true)
-                    } else {
-                        if (selectedPriority > 0) {
-                            Log.d("TaskListFragment", "Right here category")
-                            taskListViewModel.searchTasksByName(taskListViewModel.getLastSearchQuery())
-                            taskListViewModel.getTasksByPriority(prioritySpinner.selectedItemPosition)
-                        } else {
-                            // Fetch the original list if the user selected the default option,
-                            Log.d("TaskListFragment", "Right here here category")
-                            taskListViewModel.searchTasksByName(taskListViewModel.getLastSearchQuery())
-                            taskListViewModel.setIsCategorySorting(false)
-                        }
-                    }
-                }
-            }
-
-            override fun onNothingSelected(parentView: AdapterView<*>) {
-                // Do nothing
-            }
-        }
-
-        //  viewLifecycleOwner.lifecycleScope.launch {
-        //      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-        //          taskListViewModel.tasks.collect { tasks ->
-        //              binding.taskRecyclerView.adapter =
-        //                  TaskListAdapter(tasks) { taskId ->
-        //                      findNavController().navigate(
-        //                          TaskListFragmentDirections.showTaskDetail(taskId)
-        //                      )
-        //                  }
-        //              updateViewsVisibility(tasks)
-        //          }
-        //      }
-        //  }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -296,10 +238,10 @@ class TaskListFragment : Fragment() {
 
         if (tasks.isEmpty()) {
             if (taskListViewModel.getLastSearchQuery().isNotEmpty() ||
-                taskListViewModel.isCategorySorting.value ||
-                taskListViewModel.isPrioritySorting.value
-            ) {
+                taskListViewModel.selectedCategoryKey > 0 ||
+                taskListViewModel.selectedPriorityKey > 0) {
                 // Show other UI elements like spinners, divider, noResultFound, etc.
+                Log.d("TaskListFragment", "Here")
                 binding.prioritySpinner.visibility = View.VISIBLE
                 binding.categorySpinner.visibility = View.VISIBLE
                 binding.sessionDivider.visibility = View.VISIBLE
@@ -308,6 +250,7 @@ class TaskListFragment : Fragment() {
                 binding.newTaskButton.visibility = View.GONE
                 binding.taskRecyclerView.visibility = View.GONE
             } else {
+                Log.d("TaskListFragment", "HereHere")
                 // Show UI elements for an empty list
                 binding.prioritySpinner.visibility = View.GONE
                 binding.categorySpinner.visibility = View.GONE
@@ -319,6 +262,7 @@ class TaskListFragment : Fragment() {
             }
         } else {
             // Show UI elements for non-empty list
+            Log.d("TaskListFragment", "HereHerHere")
             binding.prioritySpinner.visibility = View.VISIBLE
             binding.categorySpinner.visibility = View.VISIBLE
             binding.noResultFound.visibility = View.GONE

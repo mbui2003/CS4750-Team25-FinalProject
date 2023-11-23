@@ -35,13 +35,13 @@ interface TaskDao {
     @Query("SELECT * FROM Task WHERE Date <= :currentDate")
     suspend fun getTasksForNotification(currentDate: Long): List<Task>
 
-    @Query("SELECT * FROM Task WHERE title LIKE '%' || :searchQuery || '%'")
-    fun searchTasksByName(searchQuery: String): Flow<List<Task>>
-
-    @Query("SELECT * FROM Task WHERE selectedCategory = :category")
-    fun getTasksByCategory(category: Int): Flow<List<Task>>
-
-    @Query("SELECT * FROM Task WHERE selectedPriority = :priority")
-    fun getTasksByPriority(priority: Int): Flow<List<Task>>
+    @Query("SELECT * FROM Task WHERE title LIKE '%' || :searchQuery || '%' AND " +
+            "(:category = 0 OR selectedCategory = :category) AND " +
+            "(:priority = 0 OR selectedPriority = :priority)")
+    fun getFilteredTasks(
+        searchQuery: String,
+        category: Int,
+        priority: Int
+    ): Flow<List<Task>>
 
 }
