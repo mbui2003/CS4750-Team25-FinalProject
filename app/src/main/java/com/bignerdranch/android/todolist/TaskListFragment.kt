@@ -47,9 +47,6 @@ class TaskListFragment : Fragment() {
     ): View? {
         _binding = FragmentTaskListBinding.inflate(inflater, container, false)
 
-        val categorySpinner: Spinner = binding.categorySpinner
-        val prioritySpinner: Spinner = binding.prioritySpinner
-
         binding.taskRecyclerView.layoutManager = LinearLayoutManager(context)
 
         return binding.root
