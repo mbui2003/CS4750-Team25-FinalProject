@@ -3,12 +3,9 @@ package com.bignerdranch.android.todolist
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.doOnLayout
 import androidx.navigation.fragment.NavHostFragment
 import java.util.UUID
 
@@ -18,8 +15,6 @@ class MainActivity : AppCompatActivity() {
     private val PREF_CURRENT_THEME = "current_theme"
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
         // Retrieve the saved theme mode and apply it
         val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val isDarkMode = sharedPreferences.getBoolean(PREF_CURRENT_THEME, false)
@@ -29,39 +24,24 @@ class MainActivity : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
 
+        val taskIdString = intent.getStringExtra("EXTRA_TASK_ID")
+        taskIdString?.let {
+            val taskId = UUID.fromString(it)
+            navigateToTaskDetail(taskId)
+        }
+
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, NavHostFragment.create(R.navigation.nav_graph))
-                .commit()
-        }
-
-        // Delay the navigation until after the fragment container is fully initialized
-        findViewById<View>(R.id.fragment_container)?.doOnLayout {
-            val taskIdString = intent.getStringExtra("EXTRA_TASK_ID")
-            taskIdString?.let {
-                val taskId = UUID.fromString(it)
-                navigateToTaskDetail(taskId)
-            }
-        }
     }
 
     private fun navigateToTaskDetail(taskId: UUID) {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as? NavHostFragment
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.fragment_container) as NavHostFragment
+        val navController = navHostFragment.navController
 
-        if (navHostFragment != null) {
-            val navController = navHostFragment.navController
-            val action = TaskListFragmentDirections.showTaskDetail(taskId)
-
-            Log.d("MainActivity", "Navigating to TaskDetailFragment with taskId: $taskId")
-
-            navController.navigate(action)
-        } else {
-            Log.e("MainActivity", "NavHostFragment not found")
-        }
+        val action = TaskListFragmentDirections.showTaskDetail(taskId)
+        navController.navigate(action)
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.fragment_task_main, menu)
