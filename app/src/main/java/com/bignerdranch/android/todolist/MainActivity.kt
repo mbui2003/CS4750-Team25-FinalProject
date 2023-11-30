@@ -15,6 +15,9 @@ class MainActivity : AppCompatActivity() {
     private val PREF_CURRENT_THEME = "current_theme"
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
         // Retrieve the saved theme mode and apply it
         val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val isDarkMode = sharedPreferences.getBoolean(PREF_CURRENT_THEME, false)
@@ -29,9 +32,6 @@ class MainActivity : AppCompatActivity() {
             val taskId = UUID.fromString(it)
             navigateToTaskDetail(taskId)
         }
-
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
     }
 
     private fun navigateToTaskDetail(taskId: UUID) {
