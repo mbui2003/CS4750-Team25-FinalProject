@@ -46,6 +46,7 @@
         android:textAppearance="?attr/textAppearanceHeadline5"
         android:text="@string/category_label"
         android:layout_marginBottom="8dp" />
+
     <Spinner
         android:id="@+id/category_spinner"
         android:layout_width="match_parent"
@@ -56,4 +57,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/task_solved_label" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/description_label"
+        android:textAppearance="?attr/textAppearanceHeadline5" />
+
+    <EditText
+        android:id="@+id/task_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="@string/task_description_hint"
+        android:inputType="textMultiLine"
+        android:maxLength="300"
+        android:maxLines="6" />
 </LinearLayout>

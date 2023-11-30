@@ -67,6 +67,13 @@ class TaskDetailFragment: Fragment() {
                     oldTask.copy(isComplete = isChecked)
                 }
             }
+
+            taskDescription.doOnTextChanged { text, _, _, _ ->
+                val limitedText = text?.toString()?.take(Task.MAX_DESCRIPTION_LENGTH) ?: ""
+                taskDetailViewModel.updateTask { oldTask ->
+                    oldTask.copy(description = limitedText)
+                }
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -168,6 +175,10 @@ class TaskDetailFragment: Fragment() {
                     TaskDetailFragmentDirections.selectDate(task.date)
                 ) }
             taskComplete.isChecked = task.isComplete
+
+            if (taskDescription.text.toString() != task.description) {
+                taskDescription.setText(task.description)
+            }
         }
     }
 }

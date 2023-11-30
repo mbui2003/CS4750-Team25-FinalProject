@@ -13,4 +13,6 @@
     <string name="search">Search</string>
     <string name="clear_search">Clear Search</string>
     <string name="no_results_found">No tasks found!</string>
+    <string name="description_label">Task Description</string>
+    <string name="task_description_hint">Enter task description (under 300 words)...</string>
 </resources>

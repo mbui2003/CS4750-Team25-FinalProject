@@ -73,4 +73,12 @@ class TaskRepository private constructor(
     fun getFilteredTasks(searchQuery: String, category: Int, priority: Int): Flow<List<Task>> {
         return database.taskDAO().getFilteredTasks(searchQuery, category, priority)
     }
+
+    suspend fun updateTaskDescription(id: UUID, description: String) {
+        database.taskDAO().updateTaskDescription(id, description)
+    }
+
+    suspend fun getTaskDescription(id: UUID): String {
+        return database.taskDAO().getTaskDescription(id)
+    }
 }
