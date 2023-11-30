@@ -38,6 +38,7 @@ interface TaskDao {
     @Query("SELECT * FROM Task WHERE title LIKE '%' || :searchQuery || '%' AND " +
             "(:category = 0 OR selectedCategory = :category) AND " +
             "(:priority = 0 OR selectedPriority = :priority)")
+
     fun getFilteredTasks(
         searchQuery: String,
         category: Int,

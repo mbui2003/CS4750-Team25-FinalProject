@@ -60,4 +60,3 @@ class ReminderBroadcastReceiver : BroadcastReceiver() {
         return formatter.format(date)
     }
 }
-

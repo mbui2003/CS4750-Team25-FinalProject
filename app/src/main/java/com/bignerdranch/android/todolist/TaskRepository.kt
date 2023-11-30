@@ -1,8 +1,6 @@
 package com.bignerdranch.android.todolist
 
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.util.Log
 import androidx.room.Room
 import com.bignerdranch.android.todolist.database.TaskDatabase
 import com.bignerdranch.android.todolist.database.migration_1_2
@@ -10,8 +8,6 @@ import com.bignerdranch.android.todolist.database.migration_2_3
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.UUID
 

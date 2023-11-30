@@ -41,7 +41,7 @@
         android:layout_height="1dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:background="@color/purple_500" />
+        android:background="@color/seafoam_500" />
 
     <ProgressBar
         android:id="@+id/loading_indicator"

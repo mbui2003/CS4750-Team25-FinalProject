@@ -1,18 +1,25 @@
 package com.bignerdranch.android.todolist
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.NavHostFragment
 import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
 
+    private val EXTRA_TASK_ID = "EXTRA_TASK_ID"
     private val PREFS_NAME = "MyPrefsFile"
     private val PREF_CURRENT_THEME = "current_theme"
+
+    private val taskViewModel: TaskViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,17 +34,30 @@ class MainActivity : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
 
-        val taskIdString = intent.getStringExtra("EXTRA_TASK_ID")
-        taskIdString?.let {
-            val taskId = UUID.fromString(it)
-            navigateToTaskDetail(taskId)
+        // Check if the activity is recreated due to a theme change
+        if (savedInstanceState == null) {
+            // Check if there is a task ID in the intent
+            val taskIdString = intent.getStringExtra(EXTRA_TASK_ID)
+            taskIdString?.let {
+                val taskId = UUID.fromString(it)
+                navigateToTaskDetail(taskId)
+            }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // Save the task ID to the bundle
+        taskViewModel.taskId.value?.let { outState.putString(EXTRA_TASK_ID, it.toString()) }
     }
 
     private fun navigateToTaskDetail(taskId: UUID) {
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
+
+        // Set task ID in ViewModel
+        taskViewModel.setTaskId(taskId)
 
         val action = TaskListFragmentDirections.showTaskDetail(taskId)
         navController.navigate(action)
@@ -90,5 +110,14 @@ class MainActivity : AppCompatActivity() {
                 item?.setIcon(R.drawable.ic_menu_lightmode)
             }
         }
+    }
+}
+
+class TaskViewModel : ViewModel() {
+    private val _taskId = MutableLiveData<UUID>()
+    val taskId: LiveData<UUID> get() = _taskId
+
+    fun setTaskId(taskId: UUID) {
+        _taskId.value = taskId
     }
 }
