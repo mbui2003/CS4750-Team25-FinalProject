@@ -45,4 +45,9 @@ interface TaskDao {
         priority: Int
     ): Flow<List<Task>>
 
+    @Query("UPDATE Task SET description = :description WHERE id = :taskId")
+    suspend fun updateTaskDescription(taskId: UUID, description: String)
+
+    @Query("SELECT description FROM Task WHERE id = :taskId")
+    suspend fun getTaskDescription(taskId: UUID): String
 }

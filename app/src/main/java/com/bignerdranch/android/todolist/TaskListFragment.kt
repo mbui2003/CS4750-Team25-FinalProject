@@ -108,7 +108,8 @@ class TaskListFragment : Fragment() {
                 date = Date(),
                 isComplete = false,
                 selectedPriority = 0, // Set a default value here
-                selectedCategory = 0 // Set a default value here
+                selectedCategory = 0, // Set a default value here
+                description = ""
             )
             taskListViewModel.addTask(newTask)
             findNavController().navigate(
